@@ -28,18 +28,14 @@ transaction_log_cols = ['strategy_id', 'symbol', 'invested', 'buy_time', 'sell_t
 
 
 # gen strategies
-# min_volumes = [0, 20, 40]
-# min_profits = [0.02, 0.06]
-# wait_minutes = [60*12, 60*10000]
-# max_loss = [0.3, 1]
-
-min_volumes = [20]
-min_profits = [0.02,0.05]
-wait_minutes = [60*12, 10000]
-max_loss = [0.3, 1]
+min_volumes = [0, 20, 40, 60]
+min_profits = [0.01, 0.05]
+wait_minutes = [60*12, 60*10000]
+max_loss = [0.1, 1]
+min_change = [0.01, 0.02]
 
 
-params = list(product(min_volumes, min_profits, wait_minutes, max_loss))
+params = list(product(min_volumes, min_profits, wait_minutes, max_loss, min_change))
 len(params)
 strategy = {i: (volume_profit, param) for i, param in enumerate(params)}
 

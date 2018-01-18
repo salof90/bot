@@ -67,39 +67,39 @@ with open('bittrex_1h_top_cap.pkl', 'wb') as f:
     pickle.dump(ohlcv_table, f)
 
 
-close_change = ohlcv_table.groupby('symbol')["close"].apply(lambda x: x.diff() / np.concatenate([[1], x.values[:-1]]))
-ohlcv_table['change'] = close_change
-
-#ohlcv_pos_change = ohlcv_table[(ohlcv_table["profit_delays"] != -2)]
-ohlcv_pos_change = ohlcv_table
-
-unique_timestamps = ohlcv_pos_change['timestamp'].unique()
-unique_timestamps.sort()
-result = np.zeros((unique_timestamps.shape[0], 4))
-for i_ts in range(unique_timestamps.shape[0]):
-    selected_ts_ind = (ohlcv_pos_change["timestamp"] == unique_timestamps[i_ts])
-    profit_time_ind = (ohlcv_pos_change['profit_delays'] != -1)
-
-    timestamp_count = np.sum(selected_ts_ind)
-    prof_delay = ohlcv_pos_change.loc[selected_ts_ind & profit_time_ind, ['profit_delays']]
-
-    prof_mean = np.mean(prof_delay) if prof_delay.size != 0 else None
-    prof_std = np.std(prof_delay) if prof_delay.size != 0 else None
-    result[i_ts] = [unique_timestamps[i_ts], prof_mean, prof_std, len(prof_delay)/timestamp_count]
-
-
-time_convert = 1000*60*60 # miliseconds to minutes
-
-# significant when percentage of observed coins (after diff filter) above threshold
-significant_ind = result[:, 3] >= 0.8
-
-
-
-timestamps_data = pd.to_datetime(result[significant_ind , 0], unit='ms')
-mean_data = result[significant_ind , 1]/time_convert
-std_data = result[significant_ind, 2]/time_convert
-
-select_date = timestamps_data > pd.to_datetime("2018-01-05")
-
-plt.errorbar(timestamps_data[select_date], mean_data[select_date], std_data[select_date], linestyle='-', marker='.', ecolor='b', color='r')
-
+# close_change = ohlcv_table.groupby('symbol')["close"].apply(lambda x: x.diff() / np.concatenate([[1], x.values[:-1]]))
+# ohlcv_table['change'] = close_change
+#
+# #ohlcv_pos_change = ohlcv_table[(ohlcv_table["profit_delays"] != -2)]
+# ohlcv_pos_change = ohlcv_table
+#
+# unique_timestamps = ohlcv_pos_change['timestamp'].unique()
+# unique_timestamps.sort()
+# result = np.zeros((unique_timestamps.shape[0], 4))
+# for i_ts in range(unique_timestamps.shape[0]):
+#     selected_ts_ind = (ohlcv_pos_change["timestamp"] == unique_timestamps[i_ts])
+#     profit_time_ind = (ohlcv_pos_change['profit_delays'] != -1)
+#
+#     timestamp_count = np.sum(selected_ts_ind)
+#     prof_delay = ohlcv_pos_change.loc[selected_ts_ind & profit_time_ind, ['profit_delays']]
+#
+#     prof_mean = np.mean(prof_delay) if prof_delay.size != 0 else None
+#     prof_std = np.std(prof_delay) if prof_delay.size != 0 else None
+#     result[i_ts] = [unique_timestamps[i_ts], prof_mean, prof_std, len(prof_delay)/timestamp_count]
+#
+#
+# time_convert = 1000*60*60 # miliseconds to minutes
+#
+# # significant when percentage of observed coins (after diff filter) above threshold
+# significant_ind = result[:, 3] >= 0.8
+#
+#
+#
+# timestamps_data = pd.to_datetime(result[significant_ind , 0], unit='ms')
+# mean_data = result[significant_ind , 1]/time_convert
+# std_data = result[significant_ind, 2]/time_convert
+#
+# select_date = timestamps_data > pd.to_datetime("2018-01-05")
+#
+# plt.errorbar(timestamps_data[select_date], mean_data[select_date], std_data[select_date], linestyle='-', marker='.', ecolor='b', color='r')
+#

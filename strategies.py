@@ -12,7 +12,7 @@ def run_func(args):
 
 
 def volume_profit(strategy_id, params, buy, timestamp, current_ohlcv, my_open_transactions, available_balance=None, data=None):
-    min_volume, min_profit, wait_mins, max_loss = params
+    min_volume, min_profit, wait_mins, max_loss, min_change = params
     new_transactions = pd.DataFrame(columns=transaction_log_cols)
 
     if current_ohlcv.empty:
@@ -30,7 +30,7 @@ def volume_profit(strategy_id, params, buy, timestamp, current_ohlcv, my_open_tr
             while (amount_to_invest <= available_balance) and available_coins:
                 selected_symbol = available_coins.pop()
                 coindata = current_ohlcv[(current_ohlcv['symbol'] == selected_symbol)].iloc[0]
-                if (coindata['highest']*coindata['volume'] > min_volume) and (coindata['change'] > 0):
+                if (coindata['highest']*coindata['volume'] > min_volume) and (coindata['change'] > min_change):
                     buy_price = coindata['highest']
                     new_transactions.loc[-1] = [strategy_id, selected_symbol, amount_to_invest * (1 - FEE), timestamp, None, buy_price, None, None]
                     new_transactions.index += 1
